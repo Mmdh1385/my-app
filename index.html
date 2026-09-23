@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>قیمت‌نامه فروشگاه</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Tahoma, sans-serif;
+    background: #f5f6f8;
+    color: #222;
+}
+
+header {
+    background: #1677ff;
+    color: white;
+    padding: 25px 18px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 25px;
+}
+
+header p {
+    margin: 0;
+    opacity: .9;
+}
+
+.container {
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+}
+
+.search-box {
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 16px;
+    outline: none;
+}
+
+.categories {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.category {
+    border: none;
+    background: white;
+    padding: 10px 15px;
+    border-radius: 20px;
+    white-space: nowrap;
+    cursor: pointer;
+    border: 1px solid #ddd;
+}
+
+.category.active {
+    background: #1677ff;
+    color: white;
+    border-color: #1677ff;
+}
+
+.product {
+    background: white;
+    border-radius: 14px;
+    padding: 17px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+
+.product-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.product-category {
+    color: #777;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.product-price {
+    color: #1677ff;
+    font-size: 19px;
+    font-weight: bold;
+}
+
+.empty {
+    text-align: center;
+    padding: 40px 10px;
+    color: #777;
+}
+
+.admin-button {
+    display: block;
+    width: 100%;
+    margin-top: 25px;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: #222;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>قیمت‌نامه فروشگاه</h1>
+    <p>جستجوی سریع قیمت کالاها</p>
+</header>
+
+<div class="container">
+
+    <div class="search-box">
+        <input
+            type="text"
+            id="search"
+            placeholder="نام کالا را جستجو کنید..."
+        >
+    </div>
+
+    <div class="categories" id="categories"></div>
+
+    <div id="products"></div>
+
+    <button class="admin-button" onclick="adminLogin()">
+        🔐 پنل مدیریت
+    </button>
+
+</div>
+
+<script>
+
+const products = [
+    {
+        name: "روغن ۱۳۰۰ گرم",
+        price: 150000,
+        category: "مواد غذایی"
+    },
+    {
+        name: "مایع ظرفشویی ۷۵۰ گرم",
+        price: 85000,
+        category: "شوینده"
+    },
+    {
+        name: "نوشابه خانواده",
+        price: 65000,
+        category: "نوشیدنی"
+    },
+    {
+        name: "مداد مشکی",
+        price: 15000,
+        category: "لوازم التحریر"
+    }
+];
+
+const categories = [
+    "همه",
+    "شوینده",
+    "مواد غذایی",
+    "لوازم منزل",
+    "نوشیدنی",
+    "لوازم التحریر",
+    "اسباب بازی",
+    "بهداشتی"
+];
+
+let selectedCategory = "همه";
+
+const categoriesBox = document.getElementById("categories");
+const productsBox = document.getElementById("products");
+const searchBox = document.getElementById("search");
+
+function showCategories() {
+
+    categoriesBox.innerHTML = "";
+
+    categories.forEach(category => {
+
+        const button = document.createElement("button");
+
+        button.className =
+            "category " +
+            (selectedCategory === category ? "active" : "");
+
+        button.textContent = category;
+
+        button.onclick = function() {
+            selectedCategory = category;
+            showCategories();
+            showProducts();
+        };
+
+        categoriesBox.appendChild(button);
+    });
+}
+
+function showProducts() {
+
+    const searchText =
+        searchBox.value.trim().toLowerCase();
+
+    const filtered = products.filter(product => {
+
+        const matchesSearch =
+            product.name.toLowerCase().includes(searchText);
+
+        const matchesCategory =
+            selectedCategory === "همه" ||
+            product.category === selectedCategory;
+
+        return matchesSearch && matchesCategory;
+    });
+
+    productsBox.innerHTML = "";
+
+    if (filtered.length === 0) {
+
+        productsBox.innerHTML =
+            '<div class="empty">کالایی پیدا نشد 😔</div>';
+
+        return;
+    }
+
+    filtered.forEach(product => {
+
+        const div = document.createElement("div");
+
+        div.className = "product";
+
+        div.innerHTML = `
+            <div class="product-name">
+                ${product.name}
+            </div>
+
+            <div class="product-category">
+                ${product.category}
+            </div>
+
+            <div class="product-price">
+                ${product.price.toLocaleString("fa-IR")} تومان
+            </div>
+        `;
+
+        productsBox.appendChild(div);
+    });
+}
+
+searchBox.addEventListener("input", showProducts);
+
+function adminLogin() {
+
+    const password =
+        prompt("رمز ورود مدیر را وارد کنید:");
+
+    if (password === "1234") {
+
+        alert(
+            "ورود به پنل مدیریت در مرحله بعد ساخته می‌شود."
+        );
+
+    } else {
+
+        alert("رمز اشتباه است.");
+
+    }
+}
+
+showCategories();
+showProducts();
+
+</script>
+
+</body>
+</html>
