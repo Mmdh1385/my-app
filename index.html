@@ -13,7 +13,7 @@
 
 body {
     margin: 0;
-    font-family: Arial, Tahoma, sans-serif;
+    font-family: Tahoma, Arial, sans-serif;
     background: #f5f6f8;
     color: #222;
 }
@@ -21,13 +21,13 @@ body {
 header {
     background: #1677ff;
     color: white;
-    padding: 25px 18px;
+    padding: 28px 18px;
     text-align: center;
 }
 
 header h1 {
     margin: 0 0 8px;
-    font-size: 25px;
+    font-size: 26px;
 }
 
 header p {
@@ -41,89 +41,176 @@ header p {
     padding: 20px;
 }
 
-.search-box {
-    margin-top: 5px;
-    margin-bottom: 20px;
-}
-
 .search-box input {
     width: 100%;
-    padding: 16px;
+    padding: 17px;
     border: 1px solid #ddd;
-    border-radius: 12px;
-    font-size: 16px;
+    border-radius: 14px;
+    font-size: 17px;
     outline: none;
+    background: white;
 }
 
 .categories {
     display: flex;
     gap: 8px;
     overflow-x: auto;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
+    padding: 15px 0;
 }
 
 .category {
-    border: none;
+    border: 1px solid #ddd;
     background: white;
-    padding: 10px 15px;
-    border-radius: 20px;
+    padding: 10px 16px;
+    border-radius: 22px;
     white-space: nowrap;
     cursor: pointer;
-    border: 1px solid #ddd;
 }
 
 .category.active {
     background: #1677ff;
     color: white;
-    border-color: #1677ff;
 }
 
 .product {
     background: white;
-    border-radius: 14px;
-    padding: 17px;
+    border-radius: 15px;
+    padding: 18px;
     margin-bottom: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
 }
 
 .product-name {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-.product-category {
-    color: #777;
-    font-size: 13px;
-    margin-bottom: 10px;
-}
-
-.product-price {
-    color: #1677ff;
     font-size: 19px;
     font-weight: bold;
 }
 
+.product-category {
+    color: #777;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.product-price {
+    color: #1677ff;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 12px;
+}
+
 .empty {
     text-align: center;
-    padding: 40px 10px;
+    padding: 40px;
     color: #777;
 }
 
 .admin-button {
-    display: block;
     width: 100%;
-    margin-top: 25px;
+    margin-top: 20px;
     padding: 15px;
     border: none;
-    border-radius: 12px;
+    border-radius: 13px;
     background: #222;
     color: white;
     font-size: 16px;
-    cursor: pointer;
 }
 
+.hidden {
+    display: none;
+}
+
+.admin-panel {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.admin-panel h2 {
+    margin-top: 0;
+}
+
+.form-group {
+    margin-bottom: 13px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.add-button {
+    width: 100%;
+    padding: 14px;
+    background: #16a34a;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.logout-button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 10px;
+    background: #555;
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
+
+.admin-product {
+    border-top: 1px solid #eee;
+    padding: 15px 0;
+}
+
+.admin-product-name {
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.edit-button,
+.delete-button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+}
+
+.edit-button {
+    background: #1677ff;
+}
+
+.delete-button {
+    background: #dc2626;
+}
+
+.notice {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    line-height: 1.8;
+}
 </style>
 </head>
 
@@ -148,36 +235,107 @@ header p {
 
     <div id="products"></div>
 
-    <button class="admin-button" onclick="adminLogin()">
-        🔐 پنل مدیریت
+    <button class="admin-button" onclick="openAdmin()">
+        🔐 ورود به پنل مدیریت
     </button>
+
+    <div id="adminPanel" class="admin-panel hidden">
+
+        <h2>⚙️ پنل مدیریت</h2>
+
+        <div class="notice">
+            از این قسمت می‌توانی کالاها و قیمت‌ها را مدیریت کنی.
+        </div>
+
+        <div class="form-group">
+            <label>نام کالا</label>
+            <input
+                id="productName"
+                type="text"
+                placeholder="مثلاً روغن ۱۳۰۰ گرم"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>قیمت</label>
+            <input
+                id="productPrice"
+                type="number"
+                placeholder="مثلاً 150000"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>دسته‌بندی</label>
+
+            <select id="productCategory">
+
+                <option>شوینده</option>
+                <option>مواد غذایی</option>
+                <option>لوازم منزل</option>
+                <option>نوشیدنی</option>
+                <option>لوازم التحریر</option>
+                <option>اسباب بازی</option>
+                <option>بهداشتی</option>
+
+            </select>
+        </div>
+
+        <button class="add-button" onclick="saveProduct()">
+            ➕ افزودن کالا
+        </button>
+
+        <div id="adminProducts"></div>
+
+        <button class="logout-button" onclick="logout()">
+            خروج از پنل مدیریت
+        </button>
+
+    </div>
 
 </div>
 
 <script>
 
-const products = [
+const defaultProducts = [
+
     {
+        id: 1,
         name: "روغن ۱۳۰۰ گرم",
         price: 150000,
         category: "مواد غذایی"
     },
+
     {
+        id: 2,
         name: "مایع ظرفشویی ۷۵۰ گرم",
         price: 85000,
         category: "شوینده"
     },
+
     {
+        id: 3,
         name: "نوشابه خانواده",
         price: 65000,
         category: "نوشیدنی"
     },
+
     {
+        id: 4,
         name: "مداد مشکی",
         price: 15000,
         category: "لوازم التحریر"
     }
+
 ];
+
+let products =
+    JSON.parse(localStorage.getItem("products")) ||
+    defaultProducts;
+
+let selectedCategory = "همه";
+
+let editingId = null;
 
 const categories = [
     "همه",
@@ -190,11 +348,23 @@ const categories = [
     "بهداشتی"
 ];
 
-let selectedCategory = "همه";
+const categoriesBox =
+    document.getElementById("categories");
 
-const categoriesBox = document.getElementById("categories");
-const productsBox = document.getElementById("products");
-const searchBox = document.getElementById("search");
+const productsBox =
+    document.getElementById("products");
+
+const searchBox =
+    document.getElementById("search");
+
+function saveData() {
+
+    localStorage.setItem(
+        "products",
+        JSON.stringify(products)
+    );
+
+}
 
 function showCategories() {
 
@@ -202,22 +372,31 @@ function showCategories() {
 
     categories.forEach(category => {
 
-        const button = document.createElement("button");
+        const button =
+            document.createElement("button");
 
         button.className =
             "category " +
-            (selectedCategory === category ? "active" : "");
+            (selectedCategory === category
+                ? "active"
+                : "");
 
         button.textContent = category;
 
         button.onclick = function() {
+
             selectedCategory = category;
+
             showCategories();
+
             showProducts();
+
         };
 
         categoriesBox.appendChild(button);
+
     });
+
 }
 
 function showProducts() {
@@ -225,17 +404,22 @@ function showProducts() {
     const searchText =
         searchBox.value.trim().toLowerCase();
 
-    const filtered = products.filter(product => {
+    const filtered =
+        products.filter(product => {
 
-        const matchesSearch =
-            product.name.toLowerCase().includes(searchText);
+            const matchesSearch =
+                product.name
+                    .toLowerCase()
+                    .includes(searchText);
 
-        const matchesCategory =
-            selectedCategory === "همه" ||
-            product.category === selectedCategory;
+            const matchesCategory =
+                selectedCategory === "همه" ||
+                product.category === selectedCategory;
 
-        return matchesSearch && matchesCategory;
-    });
+            return matchesSearch &&
+                   matchesCategory;
+
+        });
 
     productsBox.innerHTML = "";
 
@@ -245,15 +429,18 @@ function showProducts() {
             '<div class="empty">کالایی پیدا نشد 😔</div>';
 
         return;
+
     }
 
     filtered.forEach(product => {
 
-        const div = document.createElement("div");
+        const div =
+            document.createElement("div");
 
         div.className = "product";
 
         div.innerHTML = `
+
             <div class="product-name">
                 ${product.name}
             </div>
@@ -263,35 +450,256 @@ function showProducts() {
             </div>
 
             <div class="product-price">
-                ${product.price.toLocaleString("fa-IR")} تومان
+                ${Number(product.price)
+                    .toLocaleString("fa-IR")}
+                تومان
             </div>
+
         `;
 
         productsBox.appendChild(div);
+
     });
+
 }
 
-searchBox.addEventListener("input", showProducts);
+searchBox.addEventListener(
+    "input",
+    showProducts
+);
 
-function adminLogin() {
+function openAdmin() {
 
     const password =
         prompt("رمز ورود مدیر را وارد کنید:");
 
-    if (password === "1234") {
+    if (password === "123456") {
 
-        alert(
-            "ورود به پنل مدیریت در مرحله بعد ساخته می‌شود."
-        );
+        document
+            .getElementById("adminPanel")
+            .classList.remove("hidden");
+
+        showAdminProducts();
+
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: "smooth"
+        });
 
     } else {
 
-        alert("رمز اشتباه است.");
+        alert("❌ رمز عبور اشتباه است.");
 
     }
+
+}
+
+function saveProduct() {
+
+    const name =
+        document
+            .getElementById("productName")
+            .value.trim();
+
+    const price =
+        document
+            .getElementById("productPrice")
+            .value;
+
+    const category =
+        document
+            .getElementById("productCategory")
+            .value;
+
+    if (!name || !price) {
+
+        alert("لطفاً نام کالا و قیمت را وارد کن.");
+
+        return;
+
+    }
+
+    if (editingId !== null) {
+
+        const product =
+            products.find(
+                p => p.id === editingId
+            );
+
+        product.name = name;
+        product.price = Number(price);
+        product.category = category;
+
+        editingId = null;
+
+        document.querySelector(".add-button")
+            .textContent = "➕ افزودن کالا";
+
+    } else {
+
+        products.push({
+
+            id: Date.now(),
+
+            name: name,
+
+            price: Number(price),
+
+            category: category
+
+        });
+
+    }
+
+    saveData();
+
+    document
+        .getElementById("productName")
+        .value = "";
+
+    document
+        .getElementById("productPrice")
+        .value = "";
+
+    showProducts();
+
+    showAdminProducts();
+
+}
+
+function showAdminProducts() {
+
+    const box =
+        document.getElementById("adminProducts");
+
+    box.innerHTML = "";
+
+    products.forEach(product => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "admin-product";
+
+        div.innerHTML = `
+
+            <div class="admin-product-name">
+                ${product.name}
+            </div>
+
+            <div>
+                ${Number(product.price)
+                    .toLocaleString("fa-IR")}
+                تومان
+            </div>
+
+            <div>
+                ${product.category}
+            </div>
+
+            <div class="admin-actions">
+
+                <button
+                    class="edit-button"
+                    onclick="editProduct(${product.id})">
+                    ✏️ ویرایش
+                </button>
+
+                <button
+                    class="delete-button"
+                    onclick="deleteProduct(${product.id})">
+                    🗑️ حذف
+                </button>
+
+            </div>
+
+        `;
+
+        box.appendChild(div);
+
+    });
+
+}
+
+function editProduct(id) {
+
+    const product =
+        products.find(
+            p => p.id === id
+        );
+
+    if (!product) return;
+
+    document
+        .getElementById("productName")
+        .value = product.name;
+
+    document
+        .getElementById("productPrice")
+        .value = product.price;
+
+    document
+        .getElementById("productCategory")
+        .value = product.category;
+
+    editingId = id;
+
+    document.querySelector(".add-button")
+        .textContent = "💾 ذخیره تغییرات";
+
+    window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth"
+    });
+
+}
+
+function deleteProduct(id) {
+
+    const product =
+        products.find(
+            p => p.id === id
+        );
+
+    if (!product) return;
+
+    const answer =
+        confirm(
+            "آیا مطمئنی می‌خواهی «" +
+            product.name +
+            "» را حذف کنی؟"
+        );
+
+    if (!answer) return;
+
+    products =
+        products.filter(
+            p => p.id !== id
+        );
+
+    saveData();
+
+    showProducts();
+
+    showAdminProducts();
+
+}
+
+function logout() {
+
+    document
+        .getElementById("adminPanel")
+        .classList.add("hidden");
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
 }
 
 showCategories();
+
 showProducts();
 
 </script>
